@@ -81,4 +81,5 @@ For calculation of $<U_i V_j>$:
 Data sent between `P0` & `P1` during the Du Atallah protocol:
 * `x0 + X0` & `y0 + Y0` from `P0` to `P1`
 * `x1 + X1` & `y1 + Y1` from `P1` to `P0`
+
 This needs to be done for every instance of the Du-Atallah protocol. In case of vector dot product above terms are vectors and in case of multiplication the above terms are scalar.
