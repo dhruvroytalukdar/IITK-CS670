@@ -304,27 +304,72 @@ bool check_dpf_correctness(int64_t domain_size, int64_t target_index, int64_t ta
     return true;
 }
 
-/* take command line arguments <domain_size> and <target_index> */
+/* take command line arguments <domain_size> <no of dpfs> <verbose> */
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        cerr << "Usage: " << argv[0] << " <domain_size> <no of dpfs>" << endl;
+    if (argc != 4) {
+        cerr << "Usage: dpf.exe <domain_size> <no of dpfs> <verbose>" << endl << "Verbose: 1 for detailed output, 0 for minimal output" << endl;
         return 1;
     }
     
     int domain_size = atoi(argv[1]);
     int num_dpf = atoi(argv[2]);
+    int verbose = atoi(argv[3]);
+
+    if(verbose!=0 && verbose!=1){
+        cerr << "Verbose should be either 0 or 1" << endl;
+        return 1;
+    }
 
     for( int i=0;i<num_dpf;i++){
         int target_index = random_uint() % domain_size;
         int target_value = random_uint() % ALPHA; // target value in [0, ALPHA)
 
+        if (verbose) cout<<"DPF: " << i+1 << ", target index: " << target_index << ", target value: " << target_value << endl;
+        
         vector<dpf_key_type> keys = generateDPF(domain_size, target_index, target_value);
         vector<int64_t> left_tree_result = EvalFull(domain_size, keys[0], target_index);
         vector<int64_t> right_tree_result = EvalFull(domain_size, keys[1], target_index);
 
+        if (verbose){ 
+            cout << "Left tree evaluation: ";
+            for(int k = 0; k < domain_size; k++) {
+                int64_t val = left_tree_result[k];
+                if(k != target_index) {
+                    cout << val << " ";
+                } else {
+                    cout << "[" << val << "] ";
+                }
+            }
+        }
+
+        if (verbose) {
+            cout << "\nRight tree evaluation: ";
+            for(int k = 0; k < domain_size; k++) {
+                int64_t val = right_tree_result[k];
+                if(k != target_index) {
+                    cout << val << " ";
+                } else {
+                    cout << "[" << val << "] ";
+                }
+            }
+        }
+
+        if (verbose) {
+            cout << "\nXOR of both evaluations: ";
+            for(int k = 0; k < domain_size; k++) {
+                int64_t val = left_tree_result[k] ^ right_tree_result[k];
+                if(k != target_index) {
+                    cout << val << " ";
+                } else {
+                    cout << "[" << val << "] ";
+                }
+            }
+            cout << endl;
+        }
+        
 
         bool flag = check_dpf_correctness(domain_size, target_index, target_value, keys);
-        cout << "DPF " << i+1 << ": " << (flag ? "PASSED" : "FAILED") << endl;
+        cout << "Final Verdict for DPF " << i+1 << ": " << (flag ? "PASSED" : "FAILED")<<endl<<endl;
     }
     return 0;
 }

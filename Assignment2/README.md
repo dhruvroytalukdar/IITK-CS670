@@ -7,7 +7,7 @@ This repository implements a **Distributed Point Function (DPF)** scheme in **C+
 
 A DPF allows two parties to share keys that, when evaluated independently and XORed together, yield a function that is **non-zero at exactly one target index** and **zero elsewhere** — without revealing the target index or value to either party.
 
-  
+
 ---
 
   
@@ -145,8 +145,6 @@ bool check_dpf_correctness(int64_t domain_size, int64_t target_index, int64_t ta
 
 Verifies the DPF property:
 
-  
-
 XOR of both evaluations equals target_value at target_index
 
 XOR equals 0 at all other indices
@@ -155,11 +153,9 @@ XOR equals 0 at all other indices
 
 ## User defined data structures
 
-  
 
 **struct dpf_key_type**: Holds the components of a DPF key:
 
-  
 
 ```cpp
 
@@ -195,7 +191,7 @@ g++ gen_queries.cpp -o dpf
 Run using
 ```bash
 
-./dpf.exe <domain_size> <num_dpfs>
+./dpf.exe <domain_size> <num_dpfs> <verbose>
 
 ```
 
@@ -205,11 +201,11 @@ Run using
 
 - **num_dpfs**: The number of DPF instances to generate and test.
 
+- **verbose**: 1 to show additional information and 0 to hide additional information
   
 
 For each DPF:
 
-  
 
 - Randomly select a target_index and target_value.
 
@@ -219,8 +215,6 @@ For each DPF:
 
 - Check correctness using check_dpf_correctness.
 
-  
-  
 
 Print the result as:
 
@@ -228,9 +222,11 @@ Print the result as:
 
 ```yaml
 
-DPF 1: PASSED
+Final Verdict for DPF 1: PASSED
 
-DPF 2: PASSED
+Final Verdict for DPF 2: PASSED
+
+Final Verdict for DPF 3: PASSED
 
 ...
 
@@ -248,18 +244,51 @@ g++ gen_queries.cpp -o dpf
 
 ```
 
-Example Run
+Example Run 1
 
 ```bash
 
-./dpf 8 3
+./dpf 8 3 0
 
 ```
 
-Example Output
+Example Output 1
 
 ```yaml
-DPF 1: PASSED
-DPF 2: PASSED
-DPF 3: PASSED
+Final Verdict for DPF 1: PASSED
+
+Final Verdict for DPF 2: PASSED
+
+Final Verdict for DPF 3: PASSED
+```
+
+
+Example Run 2
+
+```bash
+
+./dpf 5 3 1
+
+```
+
+Example Output 1
+
+```yaml
+DPF: 1, target index: 2, target value: 266260
+Left tree evaluation: 1522796645212426034 278158303280081160 [18665087551443045] 1007067866072954646 1689706871010596579        
+Right tree evaluation: 1522796645212426034 278158303280081160 [18665087551176817] 1007067866072954646 1689706871010596579       
+XOR of both evaluations: 0 0 [266260] 0 0
+Final Verdict for DPF 1: PASSED
+
+DPF: 2, target index: 2, target value: 680171
+Left tree evaluation: 1922776336205579081 1854491883142484205 [43270604140526894] 315309628696242494 1952552213917928536        
+Right tree evaluation: 1922776336205579081 1854491883142484205 [43270604140928453] 315309628696242494 1952552213917928536       
+XOR of both evaluations: 0 0 [680171] 0 0
+Final Verdict for DPF 2: PASSED
+
+DPF: 3, target index: 0, target value: 162847
+Left tree evaluation: [567624314034542046] 944052254226298322 146676980375483856 1915588037098685380 800500841724081066
+Right tree evaluation: [567624314034399681] 944052254226298322 146676980375483856 1915588037098685380 800500841724081066        
+XOR of both evaluations: [162847] 0 0 0 0 
+Final Verdict for DPF 3: PASSED
 ```
